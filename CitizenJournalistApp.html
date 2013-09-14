@@ -1,6 +1,6 @@
 <html>
 <head>
-	<title>Upload to Poll-lution</title>
+	<title>Citizen Journalist Application</title>
 	<!-- firebase js -->
 	<script type="text/javascript" src="https://static.firebase.com/v0/firebase.js"></script>
 	<script type='text/javascript' src='https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js'></script>
@@ -40,12 +40,38 @@ var dataToUpload;
 function handleFileSelect(evt) {
   var f = evt.target.files[0];
   var reader = new FileReader();
+  
+/*    reader.onload = function (evt) {
+        var resultdata = evt.target.result;
+        var file = theFile.name.replace(/\.[^\.]+$/, '');
+
+        firebaseRef = new Firebase('https://sun.firebaseio.com/' + file);
+        var f = nameRef.child('image');
+        f.set(resultdata);
+    }
+*/
   reader.onload = (function(theFile) {
     return function(e) {
-      var filePayload = e.target.result;
-      var id = Math.floor((Math.random()*1000)+1) + filePayload;
+      var resultdata = e.target.result;
+      var hash = Math.floor((Math.random()*1000)+1) + resultdata;
+	  var currentdate = new Date(); 
+	  var fileName = currentdate.getDate() + "" + (currentdate.getMonth()+1) + "" + currentdate.getFullYear() + "_" 
+					+ currentdate.getHours() + "_" + currentdate.getMinutes();
+	  
+	  
+      var firebaseRef = new Firebase('https://sun.firebaseio.com/Upload/' + fileName);
+	  firebaseRef.set(resultdata);
+/*      f.set(resultdata, function() {
+        document.getElementById("#fileUpload").src = e.target.result;
+        //$('#file-upload').hide();
+        // Update the location bar so the URL can be shared with others
+        //window.location.hash = hash;
+      });*/
+	  
     };
   })(f);
+  
+  
   reader.readAsDataURL(f);
 }
 
@@ -66,9 +92,18 @@ $("#fileUpload").change(function(){
     dataToUpload = readImage( this );
 });	
 	 
-	//document.getElementById("file").addEventListener('change', handleFileSelect, false);
+	//document.getElementById("fileUpload").addEventListener('change', handleFileSelect, false);
 	 
 	var firebaseRef = 'https://sun.firebaseio.com/';
+
+	var videos = [];
+	videos.push("http://www.youtube.com/embed/AmRC5a6ZXHo");
+	videos.push("http://www.youtube.com/embed/AmRC5a6ZXHo");
+	videos.push("http://www.youtube.com/embed/JOOfRE4m7PE");
+	videos.push("http://www.youtube.com/embed/8l4Hyv0Utrs");
+	videos.push("http://www.youtube.com/embed/opwY0PEQG8k");
+	videos.push("http://www.youtube.com/embed/TWhXZbUAggg");
+
 
 	var images = [];
 	images.push("http://im.rediff.com/money/2010/jun/28life1.jpg");
@@ -77,9 +112,16 @@ $("#fileUpload").change(function(){
 	images.push("http://www.mediasourcetv.com/Portals/0/BreakingNews.png");
 	images.push("http://www.thehindu.com/multimedia/dynamic/01219/26_news_dip_3_1219358g.jpg");
 	images.push("http://www.wntsecurity.com/images/news.jpg");
+	images.push("http://1.bp.blogspot.com/-T3aI655CeNk/UZBQOO2vG9I/AAAAAAAAC6Q/gpzNXdwN1ys/s1600/DSC_0004.jpg");
+	images.push("http://4.bp.blogspot.com/-tdHeJhp6g_Y/T7hZAOkIUJI/AAAAAAAABbE/HWkYrgLXyDQ/s1600/DSC_0169.jpg");
+	images.push("http://1.bp.blogspot.com/-bqQLt01sBTU/T7hZFK4YSyI/AAAAAAAABbc/8QL_9jvccI0/s1600/DSC_0186.jpg");
+	images.push("http://2.bp.blogspot.com/-kQSt8sqADP8/USpTbKlNJcI/AAAAAAAAC2c/ExGKlk33TsE/s1600/DSC_0044.jpg");
+	images.push("http://3.bp.blogspot.com/-Lnu7Spvv3KY/T_pERMW4qOI/AAAAAAAAB-M/F4pFEwzykQ8/s1600/DSC_0216.jpg");
+	images.push("http://1.bp.blogspot.com/-TOSQKtOf3eo/UEZRsM2oaoI/AAAAAAAACAY/Qq41Gmf19DU/s1600/DSC_0002.jpg");
 	
     $("#uploadbutton").click(function () {
-        var filename = $("#file").val();
+        var filename = $("#fileUpload").val();
+		//var fileData = GetFileContents();
 
 		var selectedCriteria = $("#cmbUploadCriteria").val()
 		if(selectedCriteria == 1 || selectedCriteria == 2)
@@ -88,10 +130,14 @@ $("#fileUpload").change(function(){
 							? new Firebase('https://sun.firebaseio.com/Images') : 
 								new Firebase('https://sun.firebaseio.com/Videos');
 								
+			var url = selectedCriteria == 1 
+							? images[Math.floor(Math.random() * images.length)] :
+								videos[Math.floor(Math.random() * videos.length)];
+								
 			var yourObject = { 
 								Id:Math.floor((Math.random()*100)+1),
-								Url:images[Math.floor(Math.random() * images.length)],
-								DataToUpload:dataToUpload,
+								Url:url,
+								//DataToUpload:fileData.result,
 								Info:$("textarea#uploadImageInfo").val()
 							};
 			imageRef.push(yourObject);
@@ -123,6 +169,15 @@ $("#fileUpload").change(function(){
 		*/
     });
 }); 
+
+function GetFileContents()
+{
+	var reader = new FileReader();
+	var fileToUpload = document.getElementById("fileUpload");
+	var file = fileToUpload.files[0];
+	reader.readAsDataURL(file);
+	return reader;
+}
 
 function cmbUploadCriteriaChange(obj)
 {
@@ -192,7 +247,7 @@ function readImage(input) {
 						Select file to upload and add caption :</td>
 					<td style="padding:10px;line-height:20px;">
 						<input type="file" id="fileUpload" name="file" size="10"/><br/>	<br/>
-						<img id="imgPreview" alt="Preview" height="50px;" width="50px" /> <br/>	<br/>
+						<img id="imgPreview" alt="Preview" height="80px;" width="80px" /> <br/>	<br/>
 						Details:<br/>
 						<textarea id="uploadImageInfo" class="txtarea"></textarea>
 					</td>
@@ -216,8 +271,10 @@ function readImage(input) {
 				   </td>
 				</tr>
 			</tbody>
-		</table></body>
-
+		</table>
+	<div style="width:100%;float:right;text-align:right;margin-top:150px;">
+		<b style="color:#666;font-size:13px;padding:5px;">Designed & Developed By : Sunil (sunil.sutar@nttdata.com) <br/>Prashant (prashant.lavate@nttdata.com)</b>
+	</div>
 
 </body>
 </html>
