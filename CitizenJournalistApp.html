@@ -1,0 +1,181 @@
+<html>
+<head>
+	<title>Upload to Poll-lution</title>
+	<!-- firebase js -->
+	<script type="text/javascript" src="https://static.firebase.com/v0/firebase.js"></script>
+	<script type='text/javascript' src='https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js'></script>
+	 <script src="//cdn.firebase.com/v0/firebase.js"></script>
+	<!-- jQuery -->
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js"></script>
+	<script>window.jQuery || document.write('<script src="@Url.Content("~/Scripts/jquery-1.4.4.min.js")">\x3C/script>')</script>
+   
+  <style type="text/css">
+  #img {
+    position:fixed;
+    top:0;
+    left:0;
+    min-width:100%;
+    min-height:100%;
+  }
+</style>
+<meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+<meta content="utf-8" http-equiv="encoding">
+</head>
+<body>
+
+<script type='text/javascript'>
+
+var firebaseRef = 'https://sun.firebaseio.com/';
+
+function handleFileSelect(evt) {
+  var f = evt.target.files[0];
+  var reader = new FileReader();
+  reader.onload = (function(theFile) {
+    return function(e) {
+      var filePayload = e.target.result;
+      var id = Math.floor((Math.random()*1000)+1) + filePayload;
+    };
+  })(f);
+  reader.readAsDataURL(f);
+}
+
+$(document).ready(function () {
+	$("#uploadRow").show();
+	$("#textRow").hide();
+	$("input:file").change(function (evt){
+		var fileName = $(this).val();
+		$(".filename").html(fileName);
+		
+		var f = evt.target.files[0];
+		var reader = new FileReader();
+		reader.readAsDataURL(f);
+     });
+	 
+	//document.getElementById("file").addEventListener('change', handleFileSelect, false);
+	 
+	var firebaseRef = 'https://sun.firebaseio.com/';
+
+	var images = [];
+	images.push("http://im.rediff.com/money/2010/jun/28life1.jpg");
+	images.push("http://i1.wp.com/cyprus-mail.com/wp-content/uploads/2013/07/news-briefs-rect3.jpg");
+	images.push("http://www.nywaterway.com/NewsPress.aspx");
+	images.push("http://www.mediasourcetv.com/Portals/0/BreakingNews.png");
+	images.push("http://www.thehindu.com/multimedia/dynamic/01219/26_news_dip_3_1219358g.jpg");
+	images.push("http://www.wntsecurity.com/images/news.jpg");
+	
+    $("#uploadbutton").click(function () {
+        var filename = $("#file").val();
+
+		var selectedCriteria = $("#cmbUploadCriteria").val()
+		if(selectedCriteria == 1 || selectedCriteria == 2)
+		{
+			var imageRef = selectedCriteria == 1 
+							? new Firebase('https://sun.firebaseio.com/Images') : 
+								new Firebase('https://sun.firebaseio.com/Videos');
+								
+			var yourObject = { 
+								Id:Math.floor((Math.random()*100)+1),
+								Url:images[Math.floor(Math.random() * images.length)],
+								Info:$("textarea#uploadImageInfo").val()
+							};
+			imageRef.push(yourObject);
+		}
+		else if(selectedCriteria == 3)
+		{
+			var textRef = new Firebase('https://sun.firebaseio.com/TextMessages');
+								
+			var yourObject = { 
+								Id:Math.floor((Math.random()*100)+1),
+								Info:$("textarea#uploadTextArea").val()
+							};
+			textRef.push(yourObject);
+		}
+		
+		
+		/*
+		var messageListQuery = messageListRef.limit(100);
+		var messageListRef = new Firebase('https://sun.firebaseio.com/ImageReferences');
+		
+		messageListQuery.on('child_added', function(snapshot) {
+		  var messageInfo = snapshot.val();
+		  alert('Image uploaded : Id ' + messageInfo.imageId + ', url : ' + messageInfo.imageUrl);
+		});
+		messageListQuery.on('child_removed', function(snapshot) {
+		  var messageInfo = snapshot.val();
+		  alert('Image removed ' + messageInfo.imageUrl + ' from user ' + messageInfo.imageId + ' should no longer be displayed.');
+		});
+		*/
+    });
+}); 
+
+function cmbUploadCriteriaChange(obj)
+{
+	var selectedValue = $(obj).val();
+	if(selectedValue == 1)
+	{
+		$("#uploadRow").show();
+		$("#textRow").hide();
+	}
+	else if(selectedValue == 2)
+	{
+		$("#uploadRow").show();
+		$("#textRow").hide();
+	}
+	else if(selectedValue == 3)
+	{
+		$("#uploadRow").hide();
+		$("#textRow").show();
+	}
+	else
+	{
+		$("#uploadRow").show();
+		$("#textRow").hide();
+	}
+}
+
+
+</script>
+
+<h1>Citizen Journalist App</h1>
+		<table border="1" cellpadding="1" cellspacing="1" height="78" width="500">
+			<tbody>
+				<tr>
+					<td>
+						Select Upload Criteria :
+					</td>
+					<td>
+						<select id="cmbUploadCriteria" onchange="cmbUploadCriteriaChange(this)">
+							<option selected="selected" value="1">Image</option>
+							<option value="2">Video</option>
+							<option value="3">Text</option>
+						</select>
+					</td>
+				</tr>
+				<tr id="uploadRow">
+					<td>
+						Select file to upload</td>
+					<td>
+						<input type="file" id="file" name="file" size="10"/>
+						<textarea id="uploadImageInfo"></textarea>
+					</td>
+				</tr>
+				<tr id="textRow">
+					<td>
+						Select file to upload</td>
+					<td>
+						<textarea id="uploadTextArea"></textarea>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<input id="uploadbutton" type="button" value="Upload"/>
+					</td>
+					<td>
+						&nbsp;</td>
+				</tr>
+			</tbody>
+		</table></body>
+
+
+</body>
+</html>
