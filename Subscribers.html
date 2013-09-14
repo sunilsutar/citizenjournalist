@@ -36,7 +36,8 @@ function GenerateImageInformation()
 	var imageRef = new Firebase('https://sun.firebaseio.com/Images');
 
 	imageRef.on('value', function(allMessagesSnapshot) {
-	  allMessagesSnapshot.forEach(function(messageSnapshot) {
+	$("#imageTable").html("");
+	allMessagesSnapshot.forEach(function(messageSnapshot) {
 		// Will be called with a messageSnapshot for each message under message_list.
 		var id = messageSnapshot.child('Id').val();
 		var info = messageSnapshot.child('Info').val();
@@ -57,7 +58,8 @@ function GenerateImageInformation()
 	var videoRef = new Firebase('https://sun.firebaseio.com/Videos');
 
 	videoRef.on('value', function(allVideosSnapshot) {
-	  allVideosSnapshot.forEach(function(videoSnapshot) {
+	$("#videoTable").html("");
+	allVideosSnapshot.forEach(function(videoSnapshot) {
 		// Will be called with a videoSnapshot for each message under message_list.
 		var id = videoSnapshot.child('Id').val();
 		var info = videoSnapshot.child('Info').val();
@@ -78,7 +80,8 @@ function GenerateImageInformation()
 	var textRef = new Firebase('https://sun.firebaseio.com/TextMessages');
 
 	textRef.on('value', function(allTextSnapshot) {
-	  allTextSnapshot.forEach(function(textSnapshot) {
+	$("#textTable").html("");
+	allTextSnapshot.forEach(function(textSnapshot) {
 		// Will be called with a videoSnapshot for each message under message_list.
 		var id = textSnapshot.child('Id').val();
 		var info = textSnapshot.child('Info').val();
