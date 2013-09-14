@@ -1,0 +1,187 @@
+<html>
+<head>
+	<title>Upload to Poll-lution</title>
+	<!-- firebase js -->
+	 <script src="tabcontent.js" type="text/javascript"></script>
+    <link href="template4/tabcontent.css" rel="stylesheet" type="text/css" />
+	<script type="text/javascript" src="https://static.firebase.com/v0/firebase.js"></script>
+	<script type='text/javascript' src='https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js'></script>
+	 <script src="//cdn.firebase.com/v0/firebase.js"></script>
+	<!-- jQuery -->
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js"></script>
+	<script>window.jQuery || document.write('<script src="@Url.Content("~/Scripts/jquery-1.4.4.min.js")">\x3C/script>')</script>
+   
+<meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+<meta content="utf-8" http-equiv="encoding">
+ <style type="text/css">
+ body
+ {
+ background-image:url('main-bg.png');
+ background-repeat:no-repeat;
+ background-position:right top;
+ } 
+   
+</style>
+</head>
+<body>
+
+<script type='text/javascript'>
+
+$(document).ready(function () {
+	GenerateImageInformation();
+}); 
+
+function GenerateImageInformation()
+{
+	var imageRef = new Firebase('https://sun.firebaseio.com/Images');
+
+	imageRef.on('value', function(allMessagesSnapshot) {
+	  allMessagesSnapshot.forEach(function(messageSnapshot) {
+		// Will be called with a messageSnapshot for each message under message_list.
+		var id = messageSnapshot.child('Id').val();
+		var info = messageSnapshot.child('Info').val();
+		var url = messageSnapshot.child('Url').val();
+
+		var imageObject = { 
+							id:id,
+							info:info,
+							url:url
+						 };
+
+		//Generate the html out of the above info.
+		DisplayImageInfo(imageObject);
+	  });
+	});
+	
+	
+	var videoRef = new Firebase('https://sun.firebaseio.com/Videos');
+
+	videoRef.on('value', function(allVideosSnapshot) {
+	  allVideosSnapshot.forEach(function(videoSnapshot) {
+		// Will be called with a videoSnapshot for each message under message_list.
+		var id = videoSnapshot.child('Id').val();
+		var info = videoSnapshot.child('Info').val();
+		var url = videoSnapshot.child('Url').val();
+
+		var videoObject = { 
+							id:id,
+							info:info,
+							url:url
+						 };
+
+		//Generate the html out of the above info.
+		DisplayVideoInfo(videoObject);
+	  });
+	});
+	
+	
+	var textRef = new Firebase('https://sun.firebaseio.com/TextMessages');
+
+	textRef.on('value', function(allTextSnapshot) {
+	  allTextSnapshot.forEach(function(textSnapshot) {
+		// Will be called with a videoSnapshot for each message under message_list.
+		var id = textSnapshot.child('Id').val();
+		var info = textSnapshot.child('Info').val();
+		 
+		var textObject = { 
+							id:id,
+							info:info,
+							
+						 };
+
+		//Generate the html out of the above info.
+		DisplayTextInfo(textObject);
+	  });
+	});
+}
+
+function DisplayImageInfo(imageObject){
+
+	$stmt = "<tr>";
+	$stmt += '<td style="padding-left:10px;width:120px;padding-bottom:5px;">';
+	$stmt += '<img src="' + imageObject.url + '" alt="asas" width="120" height="120"/>';
+	$stmt += '</td>';
+	$stmt += '<td valign="top" style="padding-left:10px;width:600px;padding-bottom:5px;">';
+	$stmt += imageObject.info;
+	$stmt += '</td>';
+	$stmt += '</tr>';
+
+	$("#imageTable").prepend($stmt);
+}
+
+function DisplayVideoInfo(videoObject){
+
+	$stmt = "<tr>";
+	$stmt += '<td style="padding-left:10px;width:120px;padding-bottom:5px;">';
+	$stmt += '<img src="' + videoObject.url + '" alt="asas" width="120" height="120"/>';
+	$stmt += '</td>';
+	$stmt += '<td valign="top" style="padding-left:10px;width:600px;padding-bottom:5px;">';
+	$stmt += videoObject.info;
+	$stmt += '</td>';
+	$stmt += '</tr>';
+
+	$("#videoTable").prepend($stmt);
+}
+
+function DisplayTextInfo(textObject){
+
+	$stmt = "<tr>";
+	$stmt += '<td valign="top" style="padding:10px;width:700px;border-bottom:solid 1px #EEEEEE;color:#000000;">';
+	$stmt += textObject.info;
+	$stmt += '</td>';
+	$stmt += '</tr>';
+
+	$("#textTable").prepend($stmt);
+}
+
+
+</script>
+
+<table width="800px" align="center" style="border:solid 1px #333333;background:#eeeeee;font-size:14px;" cellspacing="0">
+	<tr>
+		<td align="center" style="border-bottom:solid 0px #fefefe;"> <h1>Citizen Journalist Subscriber</h1></td>
+	</tr>
+	
+	<tr>
+		<td>
+			<div style="width: 800px; margin: 0 auto; padding: 5px;">
+        <ul class="tabs" data-persist="true">
+            <li><a href="#view1">Images</a></li>
+            <li><a href="#view2">Videos</a></li>
+            <li><a href="#view3">Text</a></li>
+        </ul>
+        <div class="tabcontents">
+            <div id="view1">
+                <table id="imageTable" width="720px" align="center" style="border:solid 0px #333333;background:#fff;font-size:14px;border-top:0;" cellspacing="0">
+	 
+	
+				</table>
+                
+            </div>
+            <div id="view2">
+               <table id="videoTable" width="720px" align="center" style="border:solid 0px #333333;background:#fff;font-size:14px;border-top:0;" cellspacing="0">
+	 
+	
+				</table>             
+            </div>
+            <div id="view3">
+                <table id="textTable" width="720px" align="center" style="border:solid 0px #333333;background:#fff;font-size:14px;border-top:0;" cellspacing="0">
+	 
+	
+				</table>  
+            </div>
+        </div>
+    </div>
+		</td>
+	</tr>
+	 
+</table>
+
+ 
+
+
+
+
+
+</body>
+</html>
